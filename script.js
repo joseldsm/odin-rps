@@ -15,53 +15,72 @@ function getComputerChoice() {
 }
 
 function getHumanChoice() {
-    let userInput;
-
-    do {
-        userInput = prompt("Choose between rock, paper or scissors:");
-        userInput = userInput.toLowerCase();
-    } while (userInput !== "rock" && userInput !== "paper" && userInput !== "scissors")
-    
-    return userInput;
 }
 
 function playRound(humanChoice, computerChoice) {
-
-    console.log(`>>>ROUND ${i}`);
-    console.log(`Your choice : ${humanChoice}`);
-    console.log(`Computer's choice : ${computerChoice}`);
+    let winner = "";
 
     if (humanChoice === computerChoice) {
-        console.log(`NO WINNER`);
+        winner = `Round ${i} : no winner.`;
     } else if (
     (humanChoice === "rock" && computerChoice === "scissors") ||
     (humanChoice === "paper" && computerChoice === "rock") ||
     (humanChoice === "scissors" && computerChoice === "paper")
     ) {
-        console.log(`YOU WON !`);
+        winner = `Round ${i} : you won!`;
         humanScore++;
     } else {
-        console.log(`COMPUTER WON...`);
+        winner = `Round ${i} : computer won...`;
         computerScore++;
     }
+
+    const results = document.querySelector(".results");
+    const lines = [`>>>ROUND ${i}`, `Your choice : ${humanChoice}`, `Computer's choice : ${computerChoice}`, winner];
+
+    lines.forEach(line => {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = line;
+        results.appendChild(paragraph);
+    })
 }
 
-function playGame(numberOfRounds) {    
-    for (i = 1; i <= numberOfRounds; i++) {
-        playRound(getHumanChoice(), getComputerChoice(), i);
-    }
+function playGame(event, numberOfRounds) {
+    playRound(event.target.id, getComputerChoice());
+    i++;
 
-    if (humanScore > computerScore) {
-        console.log("You won !");
-    } else if (computerScore > humanScore) {
-        console.log("You lost !")
-    } else {
-        console.log("No one won...")
+    if (i === numberOfRounds+1) {
+        let winner = "";
+    
+        if (humanScore > computerScore) {
+            winner = "YOU WON !";
+        } else if (computerScore > humanScore) {
+            winner = "COMPUTER WON...";
+        } else {
+            winner = "NO ONE WON.";
+        }
+    
+        const results = document.querySelector(".results");
+        const lines = [`>>>>GAME FINAL OUTCOME`, `Your score : ${humanScore}`, `Computer's score : ${computerScore}`, winner];
+    
+        lines.forEach(line => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = line;
+            results.appendChild(paragraph);
+        })
     }
-
-    console.log(`>>>>GAME FINAL OUTCOME`);
-    console.log(`Your score : ${humanScore}`);
-    console.log(`Computer's score : ${computerScore}`);
 }
 
-playGame(5);
+let buttons = document.querySelector(".choices");
+
+buttons.addEventListener("click", (event) => {
+    let numberOfRounds = 5;
+
+    if (i === numberOfRounds+1) {
+        humanScore = 0;
+        computerScore = 0;
+        i = 0;
+    }
+
+    playGame(event, numberOfRounds);
+
+})
